@@ -1,5 +1,7 @@
 const {create, getUserByUserId, getUsers, updateUser, deleteUser,getUserByUserEmail } = require("./service")
-const{ genSaltSync, hashSync} = require("bcrypt")
+
+const{ genSaltSync, hashSync, compareSync} = require("bcrypt")
+
 const{ signin} = require("jsonwebtoken")
 
 
@@ -13,13 +15,19 @@ Login: (req, res)=>
         {
             console.log(err)
         }
-        if(!results){
+
+        if(!results.length){
             return res.json({
                 success: 0,
                 data: "Invalid email or password"
             })
         }
+
+        results = results[0]
+
+
         const result = compareSync(body.password, results.password)
+
 
         if(result)
         {
@@ -35,7 +43,7 @@ Login: (req, res)=>
             else{
                 return res.json({
                     success: 0,
-                    data: "Invalid email or password"
+                    data: "Invalid email or passwords"
                 })
             }
     })
